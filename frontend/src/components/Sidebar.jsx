@@ -6,6 +6,13 @@ import {
   HiOutlineLogout,
   HiOutlineCode,
   HiOutlineUserGroup,
+  HiOutlineAcademicCap,
+  HiOutlineOfficeBuilding,
+  HiOutlineDocumentText,
+  HiOutlineLightBulb,
+  HiOutlineDownload,
+  HiOutlineCog,
+  HiOutlineCalendar,
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 
@@ -13,7 +20,14 @@ const navItems = [
   { to: '/', icon: HiOutlineViewGrid, label: 'Dashboard' },
   { to: '/problems', icon: HiOutlineCollection, label: 'Problems' },
   { to: '/analytics', icon: HiOutlineChartBar, label: 'Analytics' },
+  { to: '/topics', icon: HiOutlineAcademicCap, label: 'Topics' },
+  { to: '/companies', icon: HiOutlineOfficeBuilding, label: 'Companies' },
+  { to: '/contests', icon: HiOutlineCalendar, label: 'Contests' },
+  { to: '/notes', icon: HiOutlineDocumentText, label: 'Notes' },
+  { to: '/ai-hints', icon: HiOutlineLightBulb, label: 'AI Hints' },
   { to: '/leaderboard', icon: HiOutlineUserGroup, label: 'Leaderboard' },
+  { to: '/bulk-export', icon: HiOutlineDownload, label: 'Bulk Export' },
+  { to: '/admin', icon: HiOutlineCog, label: 'Admin' },
 ];
 
 export default function Sidebar({ isOpen, mobileOpen, onClose }) {

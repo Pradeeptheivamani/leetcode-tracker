@@ -82,6 +82,37 @@
   .stat-card {
     @apply glass-card p-6 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300;
   }
+
+  .auth-shell {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-shell::before,
+  .auth-shell::after {
+    content: '';
+    position: absolute;
+    width: 22rem;
+    height: 22rem;
+    border-radius: 9999px;
+    opacity: 0.14;
+    filter: blur(12px);
+    animation: floatGlow 10s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .auth-shell::before {
+    top: -8rem;
+    left: -6rem;
+    background: #2563eb;
+  }
+
+  .auth-shell::after {
+    right: -7rem;
+    bottom: -8rem;
+    background: #10b981;
+    animation-delay: -4s;
+  }
 }
 
 @layer utilities {
@@ -102,5 +133,15 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes floatGlow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5rem, -1rem, 0) scale(1.08);
   }
 }

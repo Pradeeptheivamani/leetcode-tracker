@@ -1,7 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
+const PROFILE_TOKEN_PREFIX = 'leetcode-profile:';
+
+function buildProfile(username) {
+  return {
+    id: username,
+    username,
+    email: '',
+    leetcodeUsername: username,
+    role: 'USER',
+    currentStreak: 0,
+    longestStreak: 0,
+    trackedUsers: [],
+  };
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -9,68 +22,57 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchUser();
-    } else {
-      setLoading(false);
+    if (token?.startsWith(PROFILE_TOKEN_PREFIX)) {
+      setUser(buildProfile(token.slice(PROFILE_TOKEN_PREFIX.length)));
     }
+    setLoading(false);
   }, []);
 
-  const fetchUser = async () => {
-    try {
-      const { data } = await api.get('/api/auth/me');
-      setUser(data.user);
-    } catch {
-      localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
-    } finally {
-      setLoading(false);
+  const connectLeetCode = async (username) => {
+    const cleanUsername = username.trim();
+    if (!cleanUsername) throw new Error('Enter your LeetCode username');
+
+    const response = await fetch(`https://alfa-leetcode-api.onrender.com/${cleanUsername}`);
+    const data = await response.json();
+    if (!response.ok || data.errors || data.status === 'error') {
+      throw new Error('LeetCode profile not found');
     }
-  };
 
-  const login = async (email, password) => {
-    const { data } = await api.post('/api/auth/login', { email, password });
-    localStorage.setItem('token', data.token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-    setUser(data.user);
-    return data;
-  };
-
-  const register = async (username, email, password) => {
-    const { data } = await api.post('/api/auth/register', { username, email, password });
-    localStorage.setItem('token', data.token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-    setUser(data.user);
-    return data;
+    const profile = buildProfile(cleanUsername);
+    localStorage.setItem('token', `${PROFILE_TOKEN_PREFIX}${cleanUsername}`);
+    setUser(profile);
+    return { user: profile, stats: data };
   };
 
   const updateProfile = async (profileData) => {
-    const { data } = await api.put('/api/user/profile', profileData);
-    setUser(data.user);
-    return data;
+    const updated = { ...user, ...profileData };
+    if (profileData.leetcodeUsername) {
+      updated.username = profileData.leetcodeUsername;
+      localStorage.setItem('token', `${PROFILE_TOKEN_PREFIX}${profileData.leetcodeUsername}`);
+    }
+    setUser(updated);
+    return { user: updated };
   };
 
   const trackUser = async (username) => {
-    const { data } = await api.post('/api/user/track', { username });
-    setUser((prev) => ({ ...prev, trackedUsers: data.trackedUsers }));
-    return data;
+    const updated = { ...user, trackedUsers: [...new Set([...(user.trackedUsers || []), username])] };
+    setUser(updated);
+    return updated;
   };
 
   const untrackUser = async (username) => {
-    const { data } = await api.delete(`/api/user/track/${username}`);
-    setUser((prev) => ({ ...prev, trackedUsers: data.trackedUsers }));
-    return data;
+    const updated = { ...user, trackedUsers: (user.trackedUsers || []).filter((item) => item !== username) };
+    setUser(updated);
+    return updated;
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateProfile, trackUser, untrackUser }}>
+    <AuthContext.Provider value={{ user, loading, connectLeetCode, logout, updateProfile, trackUser, untrackUser }}>
       {children}
     </AuthContext.Provider>
   );

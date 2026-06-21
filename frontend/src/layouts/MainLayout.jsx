@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
@@ -35,9 +36,14 @@ export default function MainLayout() {
           onToggleMobileSidebar={() => setMobileSidebarOpen((prev) => !prev)}
         />
 
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <motion.main
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="flex-1 p-4 md:p-6 lg:p-8"
+        >
           <Outlet />
-        </main>
+        </motion.main>
       </div>
     </div>
   );

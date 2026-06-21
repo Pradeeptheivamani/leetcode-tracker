@@ -5,7 +5,14 @@ import Problems from './pages/Problems';
 import Analytics from './pages/Analytics';
 import Leaderboard from './pages/Leaderboard';
 import Login from './pages/Login';
-import Register from './pages/Register';
+import TopicMastery from './pages/TopicMastery';
+import Companies from './pages/Companies';
+import Contests from './pages/Contests';
+import Notes from './pages/Notes';
+import AiHints from './pages/AiHints';
+import BulkExport from './pages/BulkExport';
+import Admin from './pages/Admin';
+import Profile from './pages/Profile';
 import { useAuth } from './context/AuthContext';
 
 function ProtectedRoute({ children }) {
@@ -29,7 +36,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/register" element={<Navigate to="/login" replace />} />
       <Route
         path="/"
         element={
@@ -41,7 +48,15 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="problems" element={<Problems />} />
         <Route path="analytics" element={<Analytics />} />
+        <Route path="topics" element={<TopicMastery />} />
+        <Route path="companies" element={<Companies />} />
+        <Route path="contests" element={<Contests />} />
+        <Route path="notes" element={<Notes />} />
+        <Route path="ai-hints" element={<AiHints />} />
         <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="bulk-export" element={<BulkExport />} />
+        <Route path="admin" element={<Admin />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

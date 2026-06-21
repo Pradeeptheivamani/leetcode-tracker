@@ -1,0 +1,85 @@
+CREATE DATABASE IF NOT EXISTS leetcode_analytics;
+USE leetcode_analytics;
+
+CREATE TABLE users (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(80) NOT NULL UNIQUE,
+  email VARCHAR(160) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  leetcode_username VARCHAR(80),
+  role VARCHAR(20) NOT NULL DEFAULT 'USER',
+  current_streak INT NOT NULL DEFAULT 0,
+  longest_streak INT NOT NULL DEFAULT 0,
+  last_solved_date DATE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_friends (
+  user_id BIGINT NOT NULL,
+  leetcode_username VARCHAR(80) NOT NULL,
+  PRIMARY KEY (user_id, leetcode_username),
+  CONSTRAINT fk_user_friends_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE problems (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  name VARCHAR(180) NOT NULL,
+  leetcode_url VARCHAR(500) NOT NULL,
+  difficulty VARCHAR(20) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  date_solved DATE,
+  notes LONGTEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_problems_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE problem_tags (
+  problem_id BIGINT NOT NULL,
+  tag VARCHAR(80) NOT NULL,
+  PRIMARY KEY (problem_id, tag),
+  CONSTRAINT fk_problem_tags_problem FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
+);
+
+CREATE TABLE problem_companies (
+  problem_id BIGINT NOT NULL,
+  company VARCHAR(80) NOT NULL,
+  PRIMARY KEY (problem_id, company),
+  CONSTRAINT fk_problem_companies_problem FOREIGN KEY (problem_id) REFERENCES problems(id) ON DELETE CASCADE
+);
+
+CREATE TABLE contests (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  contest_name VARCHAR(160) NOT NULL,
+  contest_date DATE NOT NULL,
+  rank_value INT,
+  rating INT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_contests_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE notes (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  title VARCHAR(180) NOT NULL,
+  category VARCHAR(40) NOT NULL,
+  content_html LONGTEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_notes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE bulk_export_jobs (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  requested_by BIGINT NOT NULL,
+  username_count INT NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  summary_json LONGTEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_bulk_export_user FOREIGN KEY (requested_by) REFERENCES users(id) ON DELETE CASCADE
+);

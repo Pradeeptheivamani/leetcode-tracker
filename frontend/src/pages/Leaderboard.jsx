@@ -5,7 +5,8 @@ import {
   HiOutlineUserAdd,
   HiOutlineUserRemove,
   HiOutlineRefresh,
-  HiOutlineScale
+  HiOutlineScale,
+  HiOutlineUserGroup
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';

@@ -1,13 +1,13 @@
 {
   "name": "leetcode-tracker",
   "private": true,
-  "workspaces": ["frontend", "backend"],
+  "workspaces": ["frontend"],
   "scripts": {
     "install": "npm install",
-    "start": "npm run dev",
-    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\"",
+    "start": "npm run dev --workspace=frontend",
+    "dev": "npm run dev --workspace=frontend",
     "build": "npm run build --workspace=frontend",
-    "lint": "npm run lint --workspace=frontend && npm run lint --workspace=backend"
+    "lint": "npm run lint --workspace=frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

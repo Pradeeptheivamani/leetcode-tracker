@@ -1,76 +1,50 @@
-import { motion } from 'framer-motion';
-import { HiOutlineChartBar } from 'react-icons/hi';
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.1 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { contests, monthlySolved } from '../data/mockData';
 
 export default function Analytics() {
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="space-y-8"
-    >
-      {/* Header */}
-      <motion.div variants={item}>
-        <h1 className="text-2xl md:text-3xl font-bold text-surface-900 dark:text-surface-50">
-          Analytics
-        </h1>
-        <p className="mt-1 text-surface-500 dark:text-surface-400">
-          Deep insights into your coding progress
-        </p>
-      </motion.div>
-
-      {/* Charts Placeholder */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-4">
-            Problems by Difficulty
-          </h2>
-          <div className="flex items-center justify-center h-64 text-surface-400 dark:text-surface-500">
-            <div className="text-center">
-              <HiOutlineChartBar className="w-12 h-12 mx-auto mb-3 opacity-40" />
-              <p className="font-medium">No data available</p>
-              <p className="text-sm mt-1">Solve problems to see analytics</p>
-            </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-surface-950 dark:text-white">Progress Analytics</h1>
+        <p className="text-surface-500 dark:text-surface-400">Weekly progress, monthly trends, streak visualization, and contest growth.</p>
+      </div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <section className="glass-card p-5">
+          <h2 className="mb-4 text-lg font-semibold">Monthly Solved</h2>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlySolved}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="label" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="value" fill="#2563eb" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-
-        <div className="glass-card p-6">
-          <h2 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-4">
-            Topic Mastery
-          </h2>
-          <div className="flex items-center justify-center h-64 text-surface-400 dark:text-surface-500">
-            <div className="text-center">
-              <HiOutlineChartBar className="w-12 h-12 mx-auto mb-3 opacity-40" />
-              <p className="font-medium">No data available</p>
-              <p className="text-sm mt-1">Track topics to see mastery levels</p>
-            </div>
+        </section>
+        <section className="glass-card p-5">
+          <h2 className="mb-4 text-lg font-semibold">Contest Rating Graph</h2>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={contests}>
+                <XAxis dataKey="contestName" hide />
+                <YAxis />
+                <Tooltip />
+                <Line dataKey="rating" stroke="#059669" strokeWidth={3} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
+        </section>
+      </div>
+      <section className="glass-card p-5">
+        <h2 className="mb-4 text-lg font-semibold">Streak Visualization</h2>
+        <div className="grid grid-cols-7 gap-2 md:grid-cols-14">
+          {Array.from({ length: 42 }).map((_, index) => (
+            <div key={index} className={`aspect-square rounded ${index % 5 === 0 ? 'bg-surface-200 dark:bg-surface-800' : index % 3 === 0 ? 'bg-emerald-300' : 'bg-emerald-600'}`} />
+          ))}
         </div>
-      </motion.div>
-
-      {/* Streak Calendar Placeholder */}
-      <motion.div variants={item} className="glass-card p-6">
-        <h2 className="text-lg font-semibold text-surface-800 dark:text-surface-200 mb-4">
-          Solving Streak
-        </h2>
-        <div className="flex items-center justify-center h-48 text-surface-400 dark:text-surface-500">
-          <div className="text-center">
-            <HiOutlineChartBar className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="font-medium">Streak calendar will appear here</p>
-            <p className="text-sm mt-1">Keep solving daily to build your streak!</p>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
+      </section>
+    </div>
   );
 }
